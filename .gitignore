@@ -2,3 +2,14 @@ oauth2.json
 keys.py
 test.txt
 __pycache__
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+.pytest_cache/
+data/
+coverage/
