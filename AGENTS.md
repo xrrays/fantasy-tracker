@@ -1,15 +1,24 @@
 # Fantasy Hockey Dashboard — agent context and project state
 
-Last maintained: October 4, 2026. Applies to this entire project. Read before working and update the state/next-step sections after substantial changes. Keep current decisions rather than appending a session diary. Never record credential values here.
+Last maintained: November 8, 2026. Applies to this entire project. Read before working and update the state/next-step sections after substantial changes. Keep current decisions rather than appending a session diary. Never record credential values here.
 
 ## Current project state and working conventions
 
-- The owner requested organization and a technical proposal. Folder organization is implemented; the dashboard remains in planning. Do not confuse proposed features below with shipped behavior.
+- The dashboard has a minimal frontend shell; league content, visuals, analytics, and backend server remain unimplemented. Keep proposed features below distinct from shipped behavior.
 - `backend/main.py` is the moved legacy CLI/settings script. It supports `python -m backend.main` and direct execution. `backend/__init__.py` has no network side effects, but `backend/main.py` still does; do not import the latter into a server or a test.
 - `backend/keys.py` contains the configured league key. `backend/oauth2.json` stores the approved Yahoo credentials and mutable OAuth state. Both remain ignored; resolve credentials from the backend directory, not the launch directory.
 - `test/test.py` is the moved manual league-discovery diagnostic, not an automated test. Future backend tests belong under `test/` and must use mocked Yahoo calls/sanitized fixtures by default. Live diagnostics require an intentional invocation.
-- `frontend/` is reserved for implementation and currently contains only `.gitkeep`. No npm application or dependencies have been installed.
-- There is no dashboard web server, launcher, or local fantasy database yet. Future runtime data should be ignored under `data/`.
+- `frontend/` now contains a React + TypeScript + Vite app with five hash-linked pages: Home, Teams, Players, History, Columns. Each page contains only its heading and a neutral placeholder. Navigation is client-side, supports direct hash links and browser history, and includes a responsive header and keyboard focus styles. Per the owner, do not add league content, charts, main visuals, or nonfunctional selectors/Refresh controls at this stage. Dependencies are pinned in package.json/package-lock.json; no router/query/chart library is installed. The formerly referenced `frontend/mockups/PROMPTS.txt` is absent; do not assume it still exists. The selected mockup is `concept/02-flat-precision.png`. Previous rounds and generation notes are preserved locally under ignored `archive/round-1/`, `archive/round-2/`, and `archive/round-3/`; do not assume those archived files are available in a fresh clone. Mockups are raster images, not a working web application.
+- File ownership: `README.md` is owner-edited; do not change it unless explicitly asked. `AGENTS.md` is agent-maintained. `TODO.md` is shared: maintain a shallow broad roadmap, and leave the Requirements section for the owner to write; do not populate or rewrite that section unless explicitly asked. Keep implementation details in this file rather than expanding TODO into a task backlog. `TODO.md` replaces the former `TODO.txt` roadmap (the latter was already absent when TODO.md was created).
+- The owner is considering a private hosted dashboard for roughly 16 league members and prefers free hosting. Hosting is being evaluated, not selected or authorized for deployment. Local development remains the starting point; a Windows launcher is a prior proposal whose priority should be revisited with the owner-written requirements.
+- Confirmed visual direction: lifted black/charcoal, white/gray text, and SPARSE orange accents only. Use solid fills, no gradients, sharp professional typography, proper Title Case headings, and minimal modular cards. No slogans, quirky marketing copy, large orange number walls, accent-filled ribbons, or unnecessary widgets. The owner selected Round 3/02 Flat Precision as the visual direction, now at `concept/02-flat-precision.png`. Use it as the implementation reference. Exact font and mobile treatment remain open.
+- Branding/header: supplied orange logo beside large `THO-RAY`, smaller `Fantasy Hockey League` underneath; top navigation exactly Home / Teams / Players / History / Columns, followed by a team selector and Refresh. Team selection changes Home. Knies Your Beak Fam is the initial favorite, not the only selectable team. Retain season/week controls; no separate Charts or Rankings top-level tab is currently requested.
+- Home priorities: four main groups, arranged as Round 2/01: wide current matchup at left, season profile beside it, season record book below those two, and Around the League on the right with seven other matchups. Keep one Mon–Sun cumulative scoring graph. Replace the duplicate daily two-team points table with a compact signed lead/deficit strip (positive = selected team ahead, negative = behind); this is the current design interpretation of the owner's feedback. No extra League Pulse/standings/column cards in Round 3; reduce clutter and leave depth to other tabs. Daily team-credited data and Biggest Comeback require separate validation; current weekly totals do not reconstruct earlier daily leads.
+- The owner completed `TODO.md` Requirements/Features. Priority group 1: snappy menus, live week scores and daily trends, sortable standings/basic team metrics, adjustable charts, Jordog Power Rankings, total six-year history, and mobile support. Group 2: deeper history, AI column, player/VORP and roster analysis, trade/value tools and polls, draft/manager data, and scoring what-if tools. Group 3: MCP and Discord integration. Preserve the owner's wording and priority groups; availability and scope of these features are not yet validated.
+- Six-year history is requested. The owner will supply historical league keys later. Design season-aware models with manager mapping and scoring comparability; actual historical coverage is not yet validated.
+- Selected concept: `concept/02-flat-precision.png` (Round 3/02, Flat Precision), 1774 × 887 (2:1). All other round images and design notes were moved into project-root `archive/`, which is ignored by Git. `concept/reference/thoray-logo.png` remains an active branding asset. Target responsive production layouts with desktop checks at 1440 × 900 and 1920 × 1080 plus mobile, rather than hardcoding image dimensions. Faint shading in the generated image is not an approved gradient style; use solid fills in implementation. All mockup data is illustrative.
+- Snappy interaction is a first-release requirement: reuse loaded season data for navigation and common filters, retain browser query state/cache across views, and refresh Yahoo data separately in the background. Shared backend caching and coordinated refresh must avoid a Yahoo fetch per page/filter change or per viewer. Timing targets still need agreement and device testing.
+- There is no Python dashboard backend server, launcher, or local fantasy database yet. The frontend dev/preview server binds to 127.0.0.1:5174 with strict port selection. Future runtime data should be ignored under `data/`.
 - The old `DASHBOARD_PLAN.md` was consolidated into this file. `DISCORD_AGENT_HANDOFF.md` was deleted at the owner's request after delivery. The other agent owns the sibling Discord project; avoid edits there without coordination.
 - Preserve existing local/user changes. Do not delete credentials, cache data, or unrelated files. All Yahoo league actions in this dashboard are read-only.
 - Keep Yahoo fetching, response normalization, pure analytics, storage, and HTTP/UI rendering separate. Share calculations with Discord through a small coordinated module later; do not make the bot depend on this laptop running.
@@ -22,6 +31,17 @@ From the fantasy project root:
 python test/test.py       # intentional live Yahoo league lookup
 python -m backend.main   # intentional live Yahoo settings inspection
 ```
+
+Frontend commands (run from `frontend/`):
+
+```powershell
+npm ci             # install pinned dependencies on a fresh checkout
+npm run dev        # http://127.0.0.1:5174/
+npm run build      # TypeScript check and production build
+npm run preview    # serve built frontend locally, dev server must be stopped first
+```
+
+Frontend validation: TypeScript check and Vite production build passed, and Vite reported ready on the selected port. Local HTTP verification was blocked by socket access permissions and the companion browser timed out, so visual and interactive browser verification remains outstanding. No Yahoo requests are made by this shell.
 
 Required existing Python dependencies: `yahoo-oauth`, `yahoo-fantasy-api`, `tabulate`. Use a project virtual environment when building the server. Do not add an automatic live Yahoo call to test discovery.
 
@@ -43,13 +63,13 @@ Official technology references: [FastAPI](https://fastapi.tiangolo.com/), [Vite]
 
 ### Next intended work
 
-After the owner accepts the technical direction: extract a Yahoo client with durable refresh state, collect authenticated sanitized response fixtures, normalize settings/teams/standings/matchups, and implement pure analytics. Then scaffold FastAPI and React around those verified contracts. Do not start by building chart screens with invented league data.
+The requested placeholder shell is complete. On the next content request, use the selected Flat Precision mockup at `concept/02-flat-precision.png` to derive the implementation design and mobile layout; keep placeholders until content is authorized. Use the completed Requirements/Features section in TODO.md as the owner's priorities; settle metric definitions, daily-score availability, six-year keys/coverage, editorial ownership, and hosted delivery before treating them as verified contracts. Before durable storage or sharing with league members, review the signed Yahoo agreement's applicable permissions. Then extract a Yahoo client with durable refresh state, collect sanitized response fixtures, normalize season-aware league data, and implement pure analytics. Scaffold FastAPI and React around verified contracts with navigation/filtering separated from Yahoo refresh. Production screens must use verified data.
 
-The remaining sections preserve discovery, product vision, metrics, and scope notes from the original dashboard plan.
+The remaining sections preserve discovery, product vision, metrics, and scope notes from the original dashboard plan. Where those older proposals differ from the current state above or owner-written TODO.md requirements (navigation, history priority, local launcher, palette), the current decisions and owner requirements take precedence.
 
 ## Direction
 
-Build a local browser application for understanding **the whole league**, with **Knies Your Beak Fam** highlighted as the owner's team. The emphasis is on explaining performance: who is scoring well, who is benefiting from their schedule, and which matchups and records stand out. Player and roster analysis belong in the eventual product, but should follow a reliable league dashboard.
+Build a browser application for understanding **the whole league**, with **Knies Your Beak Fam** as the owner's initial selected team and all teams selectable. The emphasis is on explaining performance: who is scoring well, who is benefiting from their schedule, and which matchups and records stand out. Player and roster analysis belong in the eventual product, but should follow a reliable league dashboard.
 
 Use Mailroom's launch-and-view model: a Windows launcher opens a React interface backed by a local Python server. Treat hosting as a later deployment option, rather than an initial dependency.
 
@@ -72,7 +92,9 @@ These are a useful analytics starting point, but the functions print terminal te
 
 ### Evidence boundary
 
-League discovery and settings are verified by the user's successful output. Additional capabilities below are documented or present in installed library code, not yet verified for every field in this NHL league. Four additional read-only endpoint probes returned HTTP 401 with the saved access token; those probes deliberately bypassed refresh and did not change credentials. That is a reason to use the existing OAuth refresh flow during implementation, not evidence that approval has been removed. Fresh authenticated endpoint sampling is an implementation gate.
+On November 8, 2026, an intentional authenticated check through the existing Python OAuth flow successfully fetched settings, all 16 standings entries, and all eight current-week matchups for Land On My Pont. Yahoo reported week 6 with matchups in progress. Current access is verified as of that check; this does not validate restart durability or every field/endpoint. Win/loss/tie values were not present at the top-level keys requested by the diagnostic; inspect the actual nested response before modeling records, rather than treating absent fields as zero. No fixtures were saved.
+
+Additional capabilities below are documented or present in installed library code, not yet verified for every field in this NHL league. Earlier GET probes returned HTTP 401 when bypassing refresh; the successful authenticated check supersedes that as the latest connectivity evidence. Fresh authenticated endpoint sampling remains an implementation gate for the other resources.
 
 ## Yahoo data inventory
 
@@ -149,7 +171,7 @@ A two-team comparison should line up scores, all-play results, consistency, head
 
 Adapt the current records code and add highest weekly score, highest combined matchup score, winning/losing streaks, and repeated bad beats. Every record includes the week, both relevant teams, values, and a link back to its matchup.
 
-Start with the current season. Later add the previous renewed season and an explicit season selector. Cross-season comparisons should show scoring rules and format changes; do not combine incompatible raw scores into one leaderboard.
+Design for current and historical seasons from the start. Validate/import historical league keys when the owner supplies them; retain the previous renewed season as a first candidate, not the complete history. Provide an explicit season selector. Cross-season comparisons should show scoring rules and format changes; do not combine incompatible raw scores into one leaderboard.
 
 ### 5. Players, rosters, and activity — next phase
 
@@ -199,6 +221,8 @@ Manage token refresh centrally and persist refreshed fields atomically. Library 
 
 ### Eventual hosting
 
+Hosting evaluation as of November 8, 2026: Vercel supports FastAPI as well as frontend hosting, but its function filesystem is unsuitable for durable local SQLite or a mutable OAuth JSON file. A free hosted design would need external durable storage and refresh coordination across concurrent requests. Render Free can run the Python server, but sleeps after 15 idle minutes and loses local file changes on restart/redeploy/spin-down; persistent disks require paid compute. Supabase Free is a possible external Postgres/auth option, subject to quotas and low-activity pausing. These are researched candidates, not adopted dependencies; recheck official plan details when selecting a host. References: https://vercel.com/docs/frameworks/backend/fastapi , https://vercel.com/docs/functions/runtimes , https://render.com/docs/free , https://supabase.com/pricing .
+
 The frontend could eventually use free static hosting, but authenticated Yahoo fetching still needs a backend. A private hosted deployment also needs secret storage, durable refresh state/cache, HTTPS, and access control for this private league. Do not commit to a provider/free tier until deployment is in scope and current costs/limits are researched.
 
 The approval was for personal use. Confirm what the signed agreement permits before public hosting or distributing league data to other people through Discord. Private league membership and API authorization are separate from redistribution permission. Keep the current local dashboard scope while that is clarified.
@@ -206,17 +230,17 @@ The approval was for personal use. Confirm what the signed agreement permits bef
 ## Build sequence and success checks
 
 1. **Data validation and extraction:** sample refreshed GET responses for standings, scoreboard, teams, categories, roster, draft and transactions. Identify the favorite by team key; verify its name is Knies Your Beak Fam. Save sanitized minimal fixtures. Confirm historical NHL keys and correct week boundaries. Define storage/retention before creating a durable cache.
-2. **Useful first release:** Windows launcher; Overview; sortable standings; weekly scores; performance/luck; current-season records; team details. Success means scoreboard and standings agree with Yahoo, finalized metrics exclude partial weeks, token refresh survives a restart, and the app can explain its numbers.
+2. **Useful first release:** selected-team Home; sortable standings; live week scores and validated daily trends; performance/luck charts; season records; team details; editorial power rankings; validated six-year history and mobile support as requested in TODO.md group 1. Set delivery/access with the owner. Success means scores and standings agree with Yahoo, finalized metrics exclude partial weeks, token refresh survives a restart, and navigation/filter changes reuse loaded data.
 3. **Roster and player depth:** daily roster-aware contribution; player explorer; free agents; draft and completed activity. Require evidence for missing fields and hockey-specific date support before shipping each analysis.
-4. **History and optional hosting:** renewed-season history, compatible comparisons, and a separate decision on a private hosted deployment.
+4. **History expansion and release:** expand deeper historical analysis after validating group 1 coverage, preserve compatible comparisons, and release through the selected private hosting approach. Windows launcher remains optional pending delivery choice.
 
 Prioritize useful league analysis over replacing every screen Yahoo already has. At week 1, charts and records must acknowledge limited completed data rather than invent trends.
 
 ## Choices still open
 
-- Visual preference: neutral dark hockey dashboard is a proposed starting point, not a confirmed requirement.
-- Whether historical seasons should enter the first release or follow current-season accuracy.
+- Flat Precision (Round 3/02) is selected; final font and mobile treatment remain open. Use solid charcoal surfaces and sparse orange, with no purple or gradients.
+- Historical league keys will be supplied later; historical seasons are part of the intended product and data model from the start.
 - Whether refresh is manual initially or automatic while open.
-- Retention/redistribution scope in the signed agreement; later hosting and bot deployment environment.
+- Retention/redistribution scope in the signed agreement; private hosting for roughly 16 members, durable token/cache storage, member access, and acceptable free-tier delays. No provider has been selected. Bot deployment remains separate.
 
 The main preference is settled: league-wide analysis first, slight emphasis on Knies Your Beak Fam, with roster/player analysis included in the eventual vision.

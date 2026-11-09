@@ -1,0 +1,94 @@
+:root {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #f2f2ee;
+  background: #181a1c;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --surface: #232629;
+  --border: #35393d;
+  --muted: #a6abae;
+  --accent: #f47c26;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-width: 320px; }
+
+a { color: inherit; text-decoration: none; }
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+  border-radius: 3px;
+}
+
+.app-shell { max-width: 1920px; margin: 0 auto; padding: 0 40px; }
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+  min-height: 104px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; flex-direction: column; flex-shrink: 0; gap: 3px; }
+.brand-name { font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: .03em; }
+.brand-description { color: var(--muted); font-size: 13px; }
+
+.navigation { display: flex; align-self: stretch; gap: 36px; }
+
+.navigation-link {
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+.navigation-link:hover, .navigation-link[aria-current="page"] { color: #f2f2ee; }
+
+.navigation-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  bottom: 21px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.page { padding: 36px 0; }
+.page:focus { outline: none; }
+h1 { margin: 0 0 24px; font-size: 24px; font-weight: 600; }
+
+.placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  padding: 32px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  text-align: center;
+}
+
+.placeholder p { margin: 0; font-size: 14px; }
+
+.skip-link { position: absolute; top: -100px; padding: 12px; background: var(--surface); z-index: 1; }
+.skip-link:focus { top: 12px; }
+
+@media (max-width: 760px) {
+  .app-shell { padding: 0 20px; }
+  .site-header { flex-direction: column; align-items: flex-start; gap: 16px; padding-top: 24px; }
+  .brand-name { font-size: 24px; }
+  .navigation { width: 100%; gap: 0; justify-content: space-between; }
+  .navigation-link { padding: 16px 0; font-size: 14px; }
+  .navigation-link[aria-current="page"]::after { bottom: 0; }
+  .page { padding: 28px 0; }
+  .placeholder { min-height: 260px; }
+}
