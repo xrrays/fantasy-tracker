@@ -2,16 +2,16 @@
 
 
 ## Broad Roadmap
-- [ ] **Phase 1 - Concept and Requirements:** Define first release, choose  visual direction, and settle access and deployment expectations.
-- [ ] **Phase 2 — Core Workflow:** Connect reliable Yahoo fetching to a usable league overview with standings, matchups, and refresh status.
-- [ ] **Phase 3 — League analytics:** Add charts, team comparisons, schedule analysis, and current-season records with verified calculations.
-- [ ] **Phase 4 — History and deeper statistics:** Validate historical seasons and expand into the agreed roster, player, and activity features.
-- [ ] **Phase 5 — Private release:** Complete league-member access, deploy to the chosen host, and verify reliability and mobile usability.
-- [ ] **Phase 6 — Improvements:** Refine the dashboard from league feedback and maintain data accuracy and dependable operation.
+- [x] **Phase 1 - Concept and Requirements:** Choose the visual direction and capture the initial requirements.
+- [x] **Phase 2 - Core Workflow:** Build the local league dashboard, shared cache, navigation and refresh workflow.
+- [ ] **Phase 3 - Accuracy and Engineering:** Reconcile scoring differences, improve validation/tests and stabilize the implemented analytics.
+- [ ] **Phase 4 - History and Deeper Analysis:** Import historical seasons and expand comparisons, player trends and trade/scoring tools.
+- [ ] **Phase 5 - Private Release:** Choose hosting, add member access and verify durable storage, backups and mobile reliability.
+- [ ] **Phase 6 - Improvements:** Refine the dashboard from league feedback and maintain data accuracy.
 
 ## Requirements/Features
 
-### ( 1  )
+### ( 1 )
 - Snappy Menus
 - Live Week Scores
     - per day weekly points trend
@@ -32,6 +32,8 @@
 - Player-Specific Stats
     - vorp
     - basic yahoo player stats
+    - player rank trends
+    - player roster trends
 - Trade/Value Evaluator
     - trade polls / league polls
 - Roster Specific Stats
@@ -40,8 +42,10 @@
     - best / worst pick
 - Manager Data
     - best waiver pickup
+    - waiver priority usage
     - most moves
     - historical data
+    - filter moves by a manager
 - Alter Scoring Stats
     - see difference in player scoring
     - "what if" scenarios

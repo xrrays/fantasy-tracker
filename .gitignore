@@ -1,4 +1,5 @@
 oauth2.json
+oauth2.json.*
 keys.py
 test.txt
 __pycache__
@@ -11,6 +12,13 @@ venv/
 node_modules/
 dist/
 .pytest_cache/
-data/
+/data/
 coverage/
 /archive/
+
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.pem
+*.key
